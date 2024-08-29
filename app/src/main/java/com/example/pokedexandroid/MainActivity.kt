@@ -29,7 +29,13 @@ import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Alignment.Companion.TopCenter
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import com.example.pokedexandroid.ui.theme.PokemonBlack
+import com.example.pokedexandroid.ui.theme.PokemonRed
+import com.example.pokedexandroid.ui.theme.PokemonWhite
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -47,7 +53,7 @@ class MainActivity : ComponentActivity() {
 fun App() {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
-        containerColor = Color(0xFF141414),
+        containerColor = PokemonBlack,
         topBar = { AppBar() },
         content = { innerPadding ->
             Box(
@@ -78,7 +84,7 @@ fun AppBar() {
             title = {
                 Text(
                     text = "POKEDEX",
-                    color = Color(0xFFE7E7E7),
+                    color = PokemonWhite,
                     modifier = Modifier
                         .padding(bottom = 16.dp)
                         .align(alignment = TopCenter)
@@ -87,7 +93,7 @@ fun AppBar() {
 
             },
             colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
-                containerColor = Color(0xFF141414)
+                containerColor = PokemonBlack
             ),
             modifier = Modifier
                 .padding(top = 16.dp)
@@ -99,7 +105,7 @@ fun AppBar() {
                 .padding(bottom = 16.dp)
                 .fillMaxWidth()
                 .height(1.dp)
-                .background(Color(0xFF8F2D2D))
+                .background(PokemonRed)
                 .align(Alignment.BottomCenter)
 
 
@@ -109,7 +115,7 @@ fun AppBar() {
             modifier = Modifier
                 .fillMaxWidth()
                 .height(1.dp)
-                .background(Color(0xFFE7E7E7))
+                .background(PokemonWhite)
                 .align(Alignment.BottomCenter)
         )
     }
@@ -127,33 +133,38 @@ fun PokedexSelectContainer() {
             .offset(x = (-40).dp)
             .fillMaxWidth(),
         shape = RoundedCornerShape(5.dp),
-        border = BorderStroke(width = 1.dp, color = Color(0xFFE7E7E7))
+        border = BorderStroke(width = 1.dp, color = PokemonWhite)
 
     ) {
         Row(horizontalArrangement = Arrangement.Start, modifier = Modifier.fillMaxWidth()) {
             Box(
                 modifier = Modifier
                     .padding(start = 32.dp)
-                    .padding(vertical = 8.dp)
-                    .padding(end = 16.dp)
-                    .height(72.dp)
-                    .width(72.dp)
+                    .padding(end = 32.dp)
+                    .height(60.dp)
+                    .width(60.dp)
 
                     .background(color = Color.Blue)
+                    .align(Alignment.CenterVertically)
 
             )
             Box(
                 modifier = Modifier
 
-                    .padding(vertical = 8.dp)
+
                     .height(72.dp)
                     .fillMaxWidth()
 
-                    .background(color = Color.Red)
-
             )
             {
-                Text("Charizard", modifier = Modifier.align(Center))
+                Text(
+                    "Charizard".uppercase(),
+                    color = PokemonWhite,
+                    fontSize = 22.sp,
+                    fontWeight = FontWeight.Normal,
+                    
+                    modifier = Modifier.align(Center)
+                )
             }
         }
 
