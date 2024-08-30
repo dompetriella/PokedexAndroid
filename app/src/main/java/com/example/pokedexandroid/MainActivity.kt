@@ -6,16 +6,19 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -24,8 +27,13 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.Center
+import androidx.compose.ui.Alignment.Companion.CenterStart
 import androidx.compose.ui.Alignment.Companion.TopCenter
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -60,12 +68,12 @@ fun App() {
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(innerPadding),
-                contentAlignment = Center
+                contentAlignment = CenterStart
             ) {
-                Column {
-                    PokedexSelectContainer()
-                    PokedexSelectContainer()
-                    PokedexSelectContainer()
+                LazyColumn {
+                    items(count = 20) { index ->
+                        PokedexSelectContainer(index = index)
+                    }
                 }
 
             }
@@ -83,7 +91,7 @@ fun AppBar() {
         CenterAlignedTopAppBar(
             title = {
                 Text(
-                    text = "POKEDEX",
+                    text = "IPSUM",
                     color = PokemonWhite,
                     modifier = Modifier
                         .padding(bottom = 16.dp)
@@ -122,51 +130,117 @@ fun AppBar() {
 }
 
 @Composable
-fun PokedexSelectContainer() {
+fun PokedexSelectContainer(index: Int) {
 
-    val clicked: Boolean = false
+    var isClicked by remember { mutableStateOf(false) }
+    val formattedNumber = String.format("#%03d", index + 1)
+    var contentSize = if (!isClicked) 50 else 100
 
+    Box {
+        Text(
+            formattedNumber,
+            color = PokemonWhite,
+            fontSize = 16.sp,
+            fontWeight = FontWeight.Normal,
+        )
+    }
     OutlinedButton(
-        onClick = { /*TODO*/ },
+        onClick = { isClicked = !isClicked },
         modifier = Modifier
-            .padding(vertical = 16.dp)
-            .offset(x = (-40).dp)
-            .fillMaxWidth(),
-        shape = RoundedCornerShape(5.dp),
+            .padding(vertical = 4.dp, horizontal = if (!isClicked) 0.dp else 32.dp)
+            .fillMaxWidth(if (!isClicked) 0.8f else 1f),
+        shape = RoundedCornerShape(2.dp),
         border = BorderStroke(width = 1.dp, color = PokemonWhite)
-
     ) {
-        Row(horizontalArrangement = Arrangement.Start, modifier = Modifier.fillMaxWidth()) {
-            Box(
-                modifier = Modifier
-                    .padding(start = 32.dp)
-                    .padding(end = 32.dp)
-                    .height(60.dp)
-                    .width(60.dp)
+        Row(
+            horizontalArrangement = Arrangement.Start,
+            modifier = Modifier
+                .fillMaxSize()
+                .fillMaxWidth()
+        ) {
 
-                    .background(color = Color.Blue)
-                    .align(Alignment.CenterVertically)
-
-            )
-            Box(
-                modifier = Modifier
+            Column(
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally,
 
 
-                    .height(72.dp)
-                    .fillMaxWidth()
-
-            )
-            {
-                Text(
-                    "Charizard".uppercase(),
-                    color = PokemonWhite,
-                    fontSize = 22.sp,
-                    fontWeight = FontWeight.Normal,
-                    
-                    modifier = Modifier.align(Center)
+                ) {
+                Box(
+                    modifier = Modifier
+                        .height(contentSize.dp)
+                        .width(contentSize.dp)
+                        .background(color = Color.Blue)
                 )
+                if (isClicked) Spacer(modifier = Modifier.height(12.dp))
+                if (isClicked) Row(horizontalArrangement = Arrangement.Center) {
+                    PokemonTypeDisplay()
+                    Spacer(modifier = Modifier.width(8.dp))
+                    PokemonTypeDisplay()
+
+                }
+
+            }
+
+            Box(
+                modifier = Modifier
+                    .background(color = Color.Red)
+
+            )
+
+            {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .fillMaxHeight()
+
+                ) {
+                    Text(
+                        "LOREM".uppercase(),
+                        color = PokemonWhite,
+                        fontFamily = FontFamily.Monospace,
+                        fontSize = if (!isClicked) 16.sp else 22.sp,
+                        fontWeight = FontWeight.Normal,
+                    )
+
+                    if (isClicked) Text(
+                        "LOREM IPSUM LOROIs".uppercase(),
+                        color = PokemonWhite,
+                        fontSize = 10.sp,
+                        fontFamily = FontFamily.Monospace,
+                        fontWeight = FontWeight.Light,
+                    )
+
+                }
+
             }
         }
 
     }
+}
+
+@Composable
+fun PokemonTypeDisplay() {
+    Box(
+        modifier = Modifier
+            .border(
+                border = BorderStroke(
+                    width = 0.5.dp,
+                    color = PokemonWhite
+
+                )
+            )
+            .width(60.dp)
+            .height(20.dp)
+    ) {
+        Text(
+            "FIRE", color = PokemonWhite,
+            fontSize = 8.sp,
+            fontFamily = FontFamily.Monospace,
+            fontWeight = FontWeight.Light,
+            modifier = Modifier.align(Center)
+        )
+    }
+
 }
