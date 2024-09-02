@@ -154,9 +154,10 @@ fun PokedexSelectContainer(index: Int) {
     ) {
         Row(
             horizontalArrangement = Arrangement.Start,
+            verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier
-                .fillMaxSize()
                 .fillMaxWidth()
+                .fillMaxHeight()
         ) {
 
             Column(
@@ -176,45 +177,42 @@ fun PokedexSelectContainer(index: Int) {
                     PokemonTypeDisplay()
                     Spacer(modifier = Modifier.width(8.dp))
                     PokemonTypeDisplay()
-
                 }
 
             }
 
-            Box(
+
+
+
+
+            Column(
+                horizontalAlignment = Alignment.CenterHorizontally,
                 modifier = Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight()
                     .background(color = Color.Red)
+            ) {
+                Text(
+                    "LOREM".uppercase(),
+                    color = PokemonWhite,
+                    fontFamily = FontFamily.Monospace,
+                    fontSize = if (!isClicked) 16.sp else 22.sp,
+                    fontWeight = FontWeight.Normal,
 
-            )
-
-            {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .fillMaxHeight()
-
-                ) {
-                    Text(
-                        "LOREM".uppercase(),
-                        color = PokemonWhite,
-                        fontFamily = FontFamily.Monospace,
-                        fontSize = if (!isClicked) 16.sp else 22.sp,
-                        fontWeight = FontWeight.Normal,
                     )
 
-                    if (isClicked) Text(
-                        "LOREM IPSUM LOROIs".uppercase(),
-                        color = PokemonWhite,
-                        fontSize = 10.sp,
-                        fontFamily = FontFamily.Monospace,
-                        fontWeight = FontWeight.Light,
-                    )
+                if (isClicked) Text(
+                    "LOREM IPSUM LOROIs".uppercase(),
+                    color = PokemonWhite,
+                    fontSize = 10.sp,
+                    fontFamily = FontFamily.Monospace,
+                    fontWeight = FontWeight.Light,
+                )
 
-                }
 
             }
+
+
         }
 
     }
