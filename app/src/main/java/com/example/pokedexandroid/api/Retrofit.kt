@@ -1,21 +1,29 @@
 package com.example.pokedexandroid.api
 
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
+import okhttp3.ResponseBody
+import org.json.JSONObject
 import retrofit2.http.GET
+import retrofit2.http.Path
 
 interface PokemonApiService {
-    @GET("pokemon")
-    suspend fun getPokemonList(): List<Pokemon>
+    @GET("pokemon/{id}")
+    suspend fun getPokemonById(@Path("id") id: Int): ResponseBody
 }
 
+class PokemonRepository(private val pokemonApiService: PokemonApiService) {
 
-object RetrofitInstance {
-    val api: PokemonApiService by lazy {
-        Retrofit.Builder()
-            .baseUrl("https://pokeapi.co/api/v2/pokemon?limit=250") // Replace with your API's base URL
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-            .create(PokemonApiService::class.java)
+    suspend fun getPokemonById(id: Int): Pokemon {
+        var rawJson = pokemonApiService.getPokemonById(id).string()
+        val jsonObject = JSONObject(rawJson)
+        
+        val name = jsonObject.getString("name")
+        val id = jsonObject.getInt("id")
+        val imageUrl = jsonObject.getJSONObject("sprites").getString("front_default")
+        val subtitle = ""
+        val mainType = ""
+        val secondaryType = null
+        return Pokemon(id, name, subtitle, mainType, secondaryType, imageUrl)
     }
 }
+
+

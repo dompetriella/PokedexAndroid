@@ -13,6 +13,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment.Companion.CenterStart
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import com.example.pokedexandroid.api.Pokemon
 import com.example.pokedexandroid.composables.AppBar
 import com.example.pokedexandroid.composables.PokedexSelectContainer.PokedexSelectContainer
@@ -40,6 +41,7 @@ fun App() {
             Box(
                 modifier = Modifier
                     .fillMaxSize()
+                    .padding(top = 16.dp)
                     .padding(innerPadding),
                 contentAlignment = CenterStart
             ) {
