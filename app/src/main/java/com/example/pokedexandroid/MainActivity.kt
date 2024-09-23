@@ -11,10 +11,16 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment.Companion.CenterStart
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.pokedexandroid.api.Pokemon
+import com.example.pokedexandroid.api.PokemonRepository
+import com.example.pokedexandroid.api.PokemonViewModel
+import com.example.pokedexandroid.api.pokemonApiService
 import com.example.pokedexandroid.composables.AppBar
 import com.example.pokedexandroid.composables.PokedexSelectContainer.PokedexSelectContainer
 import com.example.pokedexandroid.ui.theme.PokemonBlack
@@ -33,6 +39,16 @@ class MainActivity : ComponentActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun App() {
+
+    val pokemonRepository = remember { PokemonRepository(pokemonApiService = pokemonApiService) }
+    val viewModel: PokemonViewModel = remember { PokemonViewModel(pokemonRepository) }
+    val pokemonState by viewModel.pokemonList.collectAsState()
+    val pokemonRetrieved: Int = 251
+
+    LaunchedEffect(Unit) {
+        viewModel.getPokemonState(pokemonRetrieved)
+    }
+
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         containerColor = PokemonBlack,
@@ -45,18 +61,13 @@ fun App() {
                     .padding(innerPadding),
                 contentAlignment = CenterStart
             ) {
-                LazyColumn {
-                    items(count = 20) { index ->
-                        PokedexSelectContainer(
-                            pokemon = Pokemon(
-                                id = 1,
-                                name = "Charizard",
-                                subtitle = "The Flame Pokemon",
-                                mainType = "Fire",
-                                secondaryType = "Flying",
-                                imageUrl = "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/132.png"
 
-                            )
+
+                LazyColumn {
+                    items(pokemonState.size) { index ->
+                        PokedexSelectContainer(
+                            pokemon = pokemonState[index],
+                            viewModel = viewModel
                         )
                     }
                 }

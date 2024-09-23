@@ -1,7 +1,7 @@
 package com.example.pokedexandroid.composables.PokedexSelectContainer
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.core.EaseOutQuart
+import androidx.compose.animation.core.EaseOutQuint
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
@@ -26,6 +26,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -39,30 +40,42 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.zIndex
 import coil.compose.AsyncImage
 import com.example.pokedexandroid.api.Pokemon
+import com.example.pokedexandroid.api.PokemonRepository
+import com.example.pokedexandroid.api.PokemonViewModel
+import com.example.pokedexandroid.api.pokemonApiService
 import com.example.pokedexandroid.composables.PokedexSelectContainer.composables.PokedexPokemonTitle
 import com.example.pokedexandroid.composables.PokedexSelectContainer.composables.PokemonTypeDisplay
 import com.example.pokedexandroid.ui.theme.PokemonBlack
 import com.example.pokedexandroid.ui.theme.PokemonRed
 import com.example.pokedexandroid.ui.theme.PokemonWhite
+import kotlinx.coroutines.launch
 
 @Composable
-fun PokedexSelectContainer(pokemon: Pokemon) {
+fun PokedexSelectContainer(pokemon: Pokemon, viewModel: PokemonViewModel) {
+
+    val pokemonRepository = PokemonRepository(pokemonApiService = pokemonApiService)
+    val coroutineScope = rememberCoroutineScope()
+
 
     var isSelected by remember { mutableStateOf(false) }
     val formattedNumber = String.format("#%03d", pokemon.id)
-    val contentSize = if (!isSelected) 50 else 100
+    val contentSize = if (!isSelected) 60 else 100
     val numberOffsetX =
         animateDpAsState(targetValue = if (!isSelected) 30.dp else 71.dp, label = "")
-    val numberOffsetY = animateDpAsState(targetValue = if (!isSelected) 8.dp else 15.dp, label = "")
+    val numberOffsetY = animateDpAsState(
+        targetValue = if (!isSelected) 9.dp else 23.dp,
+        label = "",
+        animationSpec = tween(durationMillis = 1000, easing = EaseOutQuint)
+    )
     val horizontalPadding = animateDpAsState(
         targetValue = if (!isSelected) 0.dp else 32.dp,
         label = "",
-        animationSpec = tween(durationMillis = 600, easing = EaseOutQuart)
+        animationSpec = tween(durationMillis = 1000, easing = EaseOutQuint)
     )
     val redOffset = animateDpAsState(
         if (isSelected) (-8).dp else 0.dp,
         label = "",
-        animationSpec = tween(durationMillis = 600, delayMillis = 300)
+        animationSpec = tween(durationMillis = 600, delayMillis = 400)
     )
     val numberFontSize = if (!isSelected) 16 else 40
 
@@ -77,7 +90,7 @@ fun PokedexSelectContainer(pokemon: Pokemon) {
                 .offset(x = numberOffsetX.value, y = numberOffsetY.value)
                 .zIndex(zIndex = 100.0F)
         )
-        Box {
+        Box(modifier = Modifier.padding(vertical = 8.dp)) {
             if (isSelected) {
                 Box(
                     modifier = Modifier
@@ -92,7 +105,13 @@ fun PokedexSelectContainer(pokemon: Pokemon) {
 
 
             OutlinedButton(
-                onClick = { isSelected = !isSelected },
+                onClick = {
+                    isSelected = !isSelected
+                    // Launch the coroutine when the button is clicked
+                    coroutineScope.launch {
+                        pokemonRepository.getPokemonData(pokemon, viewModel)
+                    }
+                },
                 modifier = Modifier
                     .padding(vertical = 4.dp, horizontal = horizontalPadding.value)
                     .offset(x = if (!isSelected) (-24).dp else 0.dp)
@@ -106,8 +125,10 @@ fun PokedexSelectContainer(pokemon: Pokemon) {
                     horizontalArrangement = Arrangement.Start,
                     verticalAlignment = Alignment.CenterVertically,
                     modifier = Modifier
+                        .padding(vertical = 4.dp)
                         .fillMaxWidth()
                         .fillMaxHeight()
+
                 ) {
 
                     Column(
